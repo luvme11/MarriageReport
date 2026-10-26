@@ -37,10 +37,10 @@
     "seal2": "佐藤",
     "settingsLabel": "SETTINGS",
     "bgImage": "",
-    "cursor": "",
-    "cursorHover": "",
+    "cursor": "assets/cur-mvpx3wpa.png",
+    "cursorHover": "assets/curh-mvpx3zkb.png",
     "cursorSize": 32,
-    "cursorHot": "tl"
+    "cursorHot": "center"
   },
   "music": {
     "url": "https://youtu.be/8Xk1K6cblLY?si=__XSQ8GdvHJurA9n",
