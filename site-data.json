@@ -43,11 +43,11 @@
     "cursorHot": "tl"
   },
   "music": {
-    "url": "",
-    "title": "zukio - ぼくがあいつを殺した",
-    "volume": 50,
+    "url": "https://youtu.be/8Xk1K6cblLY?si=__XSQ8GdvHJurA9n",
+    "title": "LOVE",
+    "volume": 8,
     "start": 0,
-    "loop": true,
+    "loop": false,
     "autoplay": false
   },
   "pair": {
