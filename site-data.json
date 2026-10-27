@@ -83,5 +83,114 @@
       "heading": "",
       "body": "==여자가 남자한테 끊임없이 굴려집니다==\n비윤리적 소재 有"
     }
-  ]
+  ],
+  "sheet": {
+    "slots": {
+      "dYear": {
+        "img": "assets/slot:dYear-mvpxxaw6.png",
+        "x": 0,
+        "y": 0,
+        "s": 100,
+        "r": 0
+      },
+      "dMonth": {
+        "img": "assets/slot:dMonth-mvpxxy0a.png",
+        "x": 0,
+        "y": 0,
+        "s": 100,
+        "r": 0
+      },
+      "dDay": {
+        "img": "assets/slot:dDay-mvpy21ag.png",
+        "x": 0,
+        "y": 0,
+        "s": 100,
+        "r": 0
+      },
+      "hName": {
+        "img": "",
+        "x": 0,
+        "y": 0,
+        "s": 100,
+        "r": 0
+      },
+      "hBirth": {
+        "img": "",
+        "x": 0,
+        "y": 0,
+        "s": 100,
+        "r": 0
+      },
+      "hAddr": {
+        "img": "",
+        "x": 0,
+        "y": 0,
+        "s": 100,
+        "r": 0
+      },
+      "hHonseki": {
+        "img": "",
+        "x": 0,
+        "y": 0,
+        "s": 100,
+        "r": 0
+      },
+      "hSign": {
+        "img": "",
+        "x": 0,
+        "y": 0,
+        "s": 100,
+        "r": 0
+      },
+      "wName": {
+        "img": "",
+        "x": 0,
+        "y": 0,
+        "s": 100,
+        "r": 0
+      },
+      "wBirth": {
+        "img": "",
+        "x": 0,
+        "y": 0,
+        "s": 100,
+        "r": 0
+      },
+      "wAddr": {
+        "img": "",
+        "x": 0,
+        "y": 0,
+        "s": 100,
+        "r": 0
+      },
+      "wHonseki": {
+        "img": "",
+        "x": 0,
+        "y": 0,
+        "s": 100,
+        "r": 0
+      },
+      "wSign": {
+        "img": "",
+        "x": 0,
+        "y": 0,
+        "s": 100,
+        "r": 0
+      },
+      "wit1": {
+        "img": "assets/slot:wit1-mvpxwtmo.png",
+        "x": 0,
+        "y": 0,
+        "s": 100,
+        "r": 0
+      },
+      "wit2": {
+        "img": "assets/slot:wit2-mvpxwv9k.png",
+        "x": 0,
+        "y": 0,
+        "s": 100,
+        "r": 0
+      }
+    }
+  }
 }
