@@ -44,11 +44,11 @@
   },
   "music": {
     "url": "https://youtu.be/8Xk1K6cblLY?si=__XSQ8GdvHJurA9n",
-    "title": "LOVE",
+    "title": "스즈미야 토오루 鈴宮 透 TORU SUZUMIYA",
     "volume": 8,
     "start": 0,
     "loop": false,
-    "autoplay": false
+    "autoplay": true
   },
   "pair": {
     "tags": [
