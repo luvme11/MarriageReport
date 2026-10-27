@@ -637,7 +637,7 @@
       if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
       var im = document.createElement('img');
       im.className = 'slot-img'; im.alt = ''; im.src = SITE.res(c.img);
-      if (s.geo === 'wit') { im.style.left = '28%'; im.style.width = '68%'; im.style.bottom = '3px'; }
+      if (s.geo === 'wit') { im.style.left = '36px'; im.style.width = '72px'; im.style.bottom = '2px'; }
       else { im.style.left = '0'; im.style.width = '100%'; im.style.bottom = '0'; }
       im.style.transform = 'translate(' + (Number(c.x) || 0) + 'px,' + (Number(c.y) || 0) + 'px) rotate(' + (Number(c.r) || 0) + 'deg) scale(' + ((Number(c.s) || 100) / 100) + ')';
       el.appendChild(im);
