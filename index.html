@@ -602,6 +602,48 @@
     ]
   };
 
+  /* ───────── 서류 손글씨 PNG 자리 (혼인신고서 위에 얹힘 → 서류 기울기를 그대로 따라감) ───────── */
+  function rowBlank(i) { var r = $$('.form .row')[0]; return r ? ($$('.blank', r)[i] || null) : null; }
+  function colSpan(c, i) { return $$('.form .cols > div:nth-child(' + c + ') .fld span')[i] || null; }
+  function witBox(i) { return $$('.form .witness > div')[i] || null; }
+  var SLOT_LIST = [
+    { k: 'dYear', g: '届出日', l: '년 (年)', geo: 'field', find: function () { return rowBlank(0); } },
+    { k: 'dMonth', g: '届出日', l: '월 (月)', geo: 'field', find: function () { return rowBlank(1); } },
+    { k: 'dDay', g: '届出日', l: '일 (日)', geo: 'field', find: function () { return rowBlank(2); } },
+    { k: 'hName', g: '夫になる人', l: '氏名', geo: 'field', find: function () { return colSpan(1, 0); } },
+    { k: 'hBirth', g: '夫になる人', l: '生年月日', geo: 'field', find: function () { return colSpan(1, 1); } },
+    { k: 'hAddr', g: '夫になる人', l: '住所', geo: 'field', find: function () { return colSpan(1, 2); } },
+    { k: 'hHonseki', g: '夫になる人', l: '本籍', geo: 'field', find: function () { return colSpan(1, 3); } },
+    { k: 'hSign', g: '夫になる人', l: '署名押印', geo: 'field', find: function () { return colSpan(1, 4); } },
+    { k: 'wName', g: '妻になる人', l: '氏名', geo: 'field', find: function () { return colSpan(2, 0); } },
+    { k: 'wBirth', g: '妻になる人', l: '生年月日', geo: 'field', find: function () { return colSpan(2, 1); } },
+    { k: 'wAddr', g: '妻になる人', l: '住所', geo: 'field', find: function () { return colSpan(2, 2); } },
+    { k: 'wHonseki', g: '妻になる人', l: '本籍', geo: 'field', find: function () { return colSpan(2, 3); } },
+    { k: 'wSign', g: '妻になる人', l: '署名押印', geo: 'field', find: function () { return colSpan(2, 4); } },
+    { k: 'wit1', g: '証人', l: '証人 (1) 氏名', geo: 'wit', find: function () { return witBox(0); } },
+    { k: 'wit2', g: '証人', l: '証人 (2) 氏名', geo: 'wit', find: function () { return witBox(1); } }
+  ];
+  DEFAULTS.sheet = { slots: {} };
+  SLOT_LIST.forEach(function (s) { DEFAULTS.sheet.slots[s.k] = { img: '', x: 0, y: 0, s: 100, r: 0 }; });
+
+  function applySlots(d) {
+    var S = (d.sheet && d.sheet.slots) || {};
+    SLOT_LIST.forEach(function (s) {
+      var el = s.find(); if (!el) return;
+      var old = $('.slot-img', el); if (old) old.remove();
+      var c = S[s.k] || {};
+      if (s.k.charAt(0) === 'h') el.style.color = c.img ? 'transparent' : '';
+      if (!c.img) return;
+      if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
+      var im = document.createElement('img');
+      im.className = 'slot-img'; im.alt = ''; im.src = SITE.res(c.img);
+      if (s.geo === 'wit') { im.style.left = '28%'; im.style.width = '68%'; im.style.bottom = '3px'; }
+      else { im.style.left = '0'; im.style.width = '100%'; im.style.bottom = '0'; }
+      im.style.transform = 'translate(' + (Number(c.x) || 0) + 'px,' + (Number(c.y) || 0) + 'px) rotate(' + (Number(c.r) || 0) + 'deg) scale(' + ((Number(c.s) || 100) / 100) + ')';
+      el.appendChild(im);
+    });
+  }
+
   /* 기본값 위에 저장된 값을 덧씌움 (배열은 통째로 교체) */
   function merge(base, over) {
     if (over === undefined || over === null) return clone(base);
@@ -643,6 +685,7 @@
   base.textContent =
     '.pill.music .mt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
     '.pill.music.off{opacity:.55;cursor:default}' +
+    '.slot-img{position:absolute;pointer-events:none;max-width:none;height:auto;transform-origin:left bottom;z-index:2}' +
     '.pill.music .ms{display:flex;align-items:flex-end;gap:2.5px;width:14px;height:12px;flex:none}' +
     '.pill.music .ms i{display:block;width:2.5px;border-radius:1px;background:#2b2b2b;transform-origin:bottom}' +
     '.pill.music .ms i:nth-child(1){height:70%}.pill.music .ms i:nth-child(2){height:100%}.pill.music .ms i:nth-child(3){height:55%}' +
@@ -805,7 +848,7 @@
 
   var SITE = {
     defaults: DEFAULTS, data: clone(DEFAULTS), previews: {},
-    merge: merge, clone: clone, esc: esc, fmt: fmt, ytId: ytId, music: Music,
+    slots: SLOT_LIST, merge: merge, clone: clone, esc: esc, fmt: fmt, ytId: ytId, music: Music,
     res: function (p) { return p ? (SITE.previews[p] || p) : ''; }
   };
 
@@ -820,6 +863,8 @@
       hs[3].textContent = p.honseki; hs[4].textContent = name;
     }
     $$('.form .no, .back2 .no').forEach(function (e) { e.textContent = p.sheetNo; });
+
+    applySlots(d);
 
     /* 신분증 앞면 */
     var cf = $('#cardFront');
@@ -913,6 +958,10 @@
     cur: { label: '기본 커서', path: 'look.cursor', max: 64, w: 56, h: 56 },
     curh: { label: '클릭할 수 있는 곳의 커서 (선택)', path: 'look.cursorHover', max: 64, w: 56, h: 56 }
   };
+
+  SITE.slots.forEach(function (s) {
+    IMG['slot:' + s.k] = { label: s.g + ' · ' + s.l, path: 'sheet.slots.' + s.k + '.img', max: 800, w: 72, h: 44 };
+  });
 
   /* ───────── 상태 ───────── */
   var gh = loadGh();
@@ -1038,7 +1087,8 @@
     if (!verified || busy) return;
     busy = true; upFoot(); say('저장 중…');
     try {
-      var used = [data.images.photo, data.images.pair, data.look.bgImage, data.site.favicon, data.look.cursor, data.look.cursorHover];
+      var used = [data.images.photo, data.images.pair, data.look.bgImage, data.site.favicon, data.look.cursor, data.look.cursorHover]
+        .concat(Object.keys(data.sheet.slots).map(function (k) { return data.sheet.slots[k].img; }));
       var paths = Object.keys(pending).filter(function (p) { return used.indexOf(p) >= 0; });
       for (var i = 0; i < paths.length; i++) {
         say('이미지 올리는 중 (' + (i + 1) + '/' + paths.length + ')…');
@@ -1254,6 +1304,23 @@
       '<p class="adm-hint">클릭할 수 있는 곳 커서를 비워 두면 기본 커서를 그대로 써요. 터치 기기에서는 보이지 않아요.</p>';
   }
 
+  function slotNum(label, path) {
+    return '<div><label class="adm-lb">' + label + '</label><input class="adm-in" type="number" step="1" data-f="' + path + '" data-t="num" value="' + esc(getPath(data, path)) + '"></div>';
+  }
+  function secSlots() {
+    var h = '<h3>서류 글씨</h3><p class="adm-lead">혼인신고서의 빈칸마다 배경이 투명한 PNG(손글씨)를 넣을 수 있어요. 이미지는 서류 위에 얹혀서 <b>서류의 기울기를 그대로 따라가요.</b> 위치가 어긋나면 좌우·상하·크기·기울기로 맞춰 주세요. (夫になる人 칸은 PNG를 넣으면 기존 글자가 숨겨져요)</p>';
+    var last = '';
+    SITE.slots.forEach(function (s) {
+      if (s.g !== last) { h += '<h4 class="adm-grp">' + s.g + '</h4>'; last = s.g; }
+      var c = data.sheet.slots[s.k], url = SITE.res(c.img), P = 'sheet.slots.' + s.k + '.';
+      h += '<div class="adm-slot"><div class="adm-pv adm-pvc"' + (url ? ' style="background-image:url(\'' + esc(url) + '\')"' : '') + '>' + (url ? '' : 'PNG') + '</div><div>' +
+        '<div class="adm-srow"><b>' + s.l + '</b><div class="adm-btns"><button type="button" class="adm-btn sm" data-act="img-pick" data-k="slot:' + s.k + '">PNG 넣기</button>' +
+        (c.img ? '<button type="button" class="adm-btn sm" data-act="img-del" data-k="slot:' + s.k + '">삭제</button>' : '') + '</div></div>' +
+        '<div class="adm-g4">' + slotNum('좌우', P + 'x') + slotNum('상하', P + 'y') + slotNum('크기 %', P + 's') + slotNum('기울기 °', P + 'r') + '</div></div></div>';
+    });
+    return h;
+  }
+
   function secTab() {
     return '<h3>파비콘 · 탭 이름</h3><p class="adm-lead">브라우저 탭에 보이는 이름과 아이콘이에요. (PNG · JPG · SVG · ICO)</p>' +
       fld('탭 이름', 'site.title', { wide: 1 }) + imgCtl('fav');
@@ -1261,7 +1328,7 @@
 
   /* ───────── 그리기 ───────── */
   function renderSide() {
-    var items = [['gh', 'GitHub 설정'], ['#', 'BOARD'], ['board', '글 게시판'], ['#', 'HOME'], ['profile', '기본 정보'], ['images', '이미지'], ['look', '꾸미기'], ['stamp', '도장'], ['cursor', '마우스 커서'], ['music', '음악'], ['tab', '파비콘 · 탭 이름'], ['#', 'POPUPS'], ['pair', '페어 소개']];
+    var items = [['gh', 'GitHub 설정'], ['#', 'BOARD'], ['board', '글 게시판'], ['#', 'HOME'], ['profile', '기본 정보'], ['images', '이미지'], ['slots', '서류 글씨'], ['look', '꾸미기'], ['stamp', '도장'], ['cursor', '마우스 커서'], ['music', '음악'], ['tab', '파비콘 · 탭 이름'], ['#', 'POPUPS'], ['pair', '페어 소개']];
     side.innerHTML = items.map(function (it) {
       if (it[0] === '#') return '<h6>' + it[1] + '</h6>';
       var lock = !verified && it[0] !== 'gh';
@@ -1278,6 +1345,7 @@
       case 'look': h = secLook(); break;
       case 'stamp': h = secStamp(); break;
       case 'cursor': h = secCursor(); break;
+      case 'slots': h = secSlots(); break;
       case 'music': h = secMusic(); break;
       case 'tab': h = secTab(); break;
       case 'pair': h = secPair(); break;
@@ -1433,7 +1501,11 @@
       ".adm-yt{display:flex;align-items:center;gap:12px;margin:-4px 0 14px;font-size:10.5px;color:#8a8a85}.adm-yt img{width:96px;border-radius:8px;border:1px solid #dcdcd7}" +
       ".adm-foot{flex:none;display:flex;justify-content:flex-end;align-items:center;gap:10px;padding:12px 18px;border-top:1px solid #eee;background:#fff}" +
       ".adm-st{margin-right:auto;font-size:11px;color:#4f7a52;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}" +
-      "@media(max-width:640px){.adm-main{flex-direction:column}.adm-side{width:auto;display:flex;overflow-x:auto;padding:8px;border-right:none;border-bottom:1px solid #ececE8}.adm-side h6{display:none}.adm-nav{white-space:nowrap;width:auto;flex:none}.adm-g2,.adm-g3,.adm-colors{grid-template-columns:1fr}.adm-content{padding:18px 16px 28px}.adm-row{flex-wrap:wrap}}";
+      ".adm-grp{font:500 8.5px 'Noto Sans JP';letter-spacing:.3em;color:#8f8f8a;margin:20px 0 10px}" +
+      ".adm-slot{display:grid;grid-template-columns:84px 1fr;gap:14px;border:1px solid #dcdcd7;border-radius:12px;padding:10px 12px;margin-bottom:10px;background:#fff}" +
+      ".adm-pvc{width:84px;height:56px;background-color:#f4f4f1;background-size:contain!important;background-repeat:no-repeat;background-position:center}" +
+      ".adm-srow{display:flex;justify-content:space-between;align-items:center;gap:8px}.adm-g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}.adm-g4 .adm-in{padding:5px 8px}" +
+      "@media(max-width:640px){.adm-g4{grid-template-columns:repeat(2,1fr)}.adm-main{flex-direction:column}.adm-side{width:auto;display:flex;overflow-x:auto;padding:8px;border-right:none;border-bottom:1px solid #ececE8}.adm-side h6{display:none}.adm-nav{white-space:nowrap;width:auto;flex:none}.adm-g2,.adm-g3,.adm-colors{grid-template-columns:1fr}.adm-content{padding:18px 16px 28px}.adm-row{flex-wrap:wrap}}";
     document.head.appendChild(st);
 
     ov = document.createElement('div');
