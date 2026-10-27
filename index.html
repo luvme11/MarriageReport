@@ -259,6 +259,11 @@
   .sec h4{font:500 8.5px 'Noto Sans JP';letter-spacing:.3em;color:#8f8f8a;margin-bottom:10px}
   .sec p{margin:0}
   mark{background:#fbe9cf;color:inherit;padding:0 1px}
+
+  /* 바깥 화면: 선택 · 복사 · 드래그 막기 (팝업 글, 입력칸은 예외) */
+  html,body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  img{-webkit-user-drag:none;user-drag:none}
+  .overlay .body,.adm-ov input,.adm-ov textarea{-webkit-user-select:text;user-select:text}
 </style>
 </head>
 <body>
@@ -553,6 +558,19 @@
     document.getElementById('stage').style.transform = 'scale('+s+')';
   }
   addEventListener('resize', fit); fit();
+</script>
+<script>
+  /* 바깥 화면에서는 선택 · 복사 · 우클릭 · 드래그가 안 되게 */
+  (function(){
+    var OK='input,textarea,.overlay .body';
+    function allowed(e){
+      var t=e.target; if(t&&t.nodeType!==1) t=t.parentElement;
+      return !!(t&&t.closest&&t.closest(OK));
+    }
+    ['selectstart','contextmenu','dragstart','copy','cut'].forEach(function(ev){
+      document.addEventListener(ev,function(e){ if(!allowed(e)) e.preventDefault(); });
+    });
+  })();
 </script>
 <div id="ytHolder"></div>
 <script>
